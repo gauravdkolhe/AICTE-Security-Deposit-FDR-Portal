@@ -42,13 +42,18 @@ app = FastAPI(
     redoc_url="/api/redoc",
 )
 
+origins = [
+    settings.FRONTEND_URL,
+    "http://localhost:5173",
+    "http://localhost:3000",
+]
+if os.getenv("ADDITIONAL_ORIGINS"):
+    origins.extend([o.strip() for o in os.getenv("ADDITIONAL_ORIGINS").split(",") if o.strip()])
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        settings.FRONTEND_URL,
-        "http://localhost:5173",
-        "http://localhost:3000",
-    ],
+    allow_origins=origins,
+    allow_origin_regex=r"https://.*\.vercel\.app",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
